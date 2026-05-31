@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Image from 'next/image'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -27,8 +25,11 @@ export default function LoginPage() {
         return
       }
       if (data.session) {
-  window.location.replace('/dashboard')
-}
+        // Redirection via lien HTML — contourne les extensions
+        const a = document.createElement('a')
+        a.href = '/dashboard'
+        a.click()
+      }
     } catch (e) {
       setError('Erreur de connexion')
       setLoading(false)
