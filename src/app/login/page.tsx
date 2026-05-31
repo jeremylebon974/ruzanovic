@@ -1,0 +1,83 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function login() {
+    setLoading(true)
+    setError('')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      setError('Email ou mot de passe incorrect')
+      setLoading(false)
+      return
+    }
+    router.push('/dashboard')
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="flex justify-center mb-12">
+          <div className="w-16">
+            <Image src="/images/logo-white.png" alt="RUZANOVIC" width={120} height={160} className="w-full h-auto" />
+          </div>
+        </div>
+
+        {/* Titre */}
+        <div className="text-center mb-10">
+          <h1 className="font-display text-3xl font-light italic text-white mb-2">Accès dashboard</h1>
+          <p className="font-mono text-[0.6rem] text-white/30 tracking-[0.3em] uppercase">Ruzanovic — Espace privé</p>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-4">
+          <div>
+            <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && login()}
+              className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 transition-colors"
+              placeholder="votre@email.com"
+            />
+          </div>
+          <div>
+            <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Mot de passe</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && login()}
+              className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 transition-colors"
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && (
+            <p className="font-mono text-[0.6rem] text-[#e84c1e] tracking-widest">{error}</p>
+          )}
+
+          <button
+            onClick={login}
+            disabled={loading}
+            className="w-full bg-white text-[#0a0a0a] font-mono text-[0.6rem] tracking-[0.3em] uppercase py-4 hover:bg-[#e84c1e] hover:text-white transition-colors duration-300 disabled:opacity-50 mt-2"
+          >
+            {loading ? 'Connexion...' : 'Se connecter'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
