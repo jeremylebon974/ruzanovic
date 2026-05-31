@@ -27,9 +27,8 @@ export default function LoginPage() {
         return
       }
       if (data.session) {
-        router.push('/dashboard')
-        router.refresh()
-      }
+  window.location.replace('/dashboard')
+}
     } catch (e) {
       setError('Erreur de connexion')
       setLoading(false)
