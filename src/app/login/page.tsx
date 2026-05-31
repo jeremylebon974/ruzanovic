@@ -45,7 +45,7 @@ export default function LoginPage() {
               href="/dashboard"
               className="block w-full bg-white text-[#0a0a0a] font-mono text-[0.6rem] tracking-[0.3em] uppercase py-4 hover:bg-[#e84c1e] hover:text-white transition-colors duration-300 text-center"
             >
-              Accéder au dashboard →
+              Accéder au dashboard
             </a>
           </div>
         ) : (
