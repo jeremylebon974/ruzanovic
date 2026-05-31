@@ -9,31 +9,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   async function login() {
-    if (!email || !password) {
-      setError('Remplis tous les champs')
-      return
-    }
+    if (!email || !password) { setError('Remplis tous les champs'); return }
     setLoading(true)
     setError('')
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) {
-        setError('Erreur : ' + error.message)
-        setLoading(false)
-        return
-      }
-      if (data.session) {
-        // Redirection via lien HTML — contourne les extensions
-        const a = document.createElement('a')
-        a.href = '/dashboard'
-        a.click()
-      }
-    } catch (e) {
-      setError('Erreur de connexion')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      setError('Erreur : ' + error.message)
       setLoading(false)
+      return
     }
+    setSuccess(true)
+    setLoading(false)
   }
 
   return (
@@ -48,25 +37,38 @@ export default function LoginPage() {
           <h1 className="font-display text-3xl font-light italic text-white mb-2">Accès dashboard</h1>
           <p className="font-mono text-[0.6rem] text-white/30 tracking-[0.3em] uppercase">Ruzanovic — Espace privé</p>
         </div>
-        <div className="space-y-4">
-          <div>
-            <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
-              className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30"
-              placeholder="votre@email.com" />
+
+        {success ? (
+          <div className="text-center space-y-6">
+            <p className="font-mono text-[0.6rem] text-green-400 tracking-widest uppercase">Connexion réussie ✓</p>
+            
+              href="/dashboard"
+              className="block w-full bg-white text-[#0a0a0a] font-mono text-[0.6rem] tracking-[0.3em] uppercase py-4 hover:bg-[#e84c1e] hover:text-white transition-colors duration-300 text-center"
+            >
+              Accéder au dashboard →
+            </a>
           </div>
-          <div>
-            <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Mot de passe</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
-              className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30"
-              placeholder="••••••••" />
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Email</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
+                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30"
+                placeholder="votre@email.com" />
+            </div>
+            <div>
+              <label className="font-mono text-[0.55rem] tracking-widest uppercase text-white/40 block mb-2">Mot de passe</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
+                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30"
+                placeholder="••••••••" />
+            </div>
+            {error && <p className="font-mono text-[0.6rem] text-[#e84c1e] tracking-widest">{error}</p>}
+            <button onClick={login} disabled={loading}
+              className="w-full bg-white text-[#0a0a0a] font-mono text-[0.6rem] tracking-[0.3em] uppercase py-4 hover:bg-[#e84c1e] hover:text-white transition-colors duration-300 disabled:opacity-50 mt-2">
+              {loading ? 'Connexion...' : 'Se connecter'}
+            </button>
           </div>
-          {error && <p className="font-mono text-[0.6rem] text-[#e84c1e] tracking-widest">{error}</p>}
-          <button onClick={login} disabled={loading}
-            className="w-full bg-white text-[#0a0a0a] font-mono text-[0.6rem] tracking-[0.3em] uppercase py-4 hover:bg-[#e84c1e] hover:text-white transition-colors duration-300 disabled:opacity-50 mt-2">
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
-        </div>
+        )}
       </div>
     </div>
   )
