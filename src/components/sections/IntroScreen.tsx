@@ -12,106 +12,114 @@ export default function IntroScreen({ onComplete }: IntroScreenProps) {
   const [phase, setPhase] = useState<'enter' | 'logo' | 'exit'>('enter')
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('logo'), 300)
-    const t2 = setTimeout(() => setPhase('exit'), 3400)
-    const t3 = setTimeout(() => onComplete(), 4400)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    // Phase 1: Show logo
+    const t1 = setTimeout(() => setPhase('logo'), 600)
+    // Phase 2: Begin exit
+    const t2 = setTimeout(() => setPhase('exit'), 3000)
+    // Phase 3: Complete
+    const t3 = setTimeout(() => onComplete(), 4200)
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
   }, [onComplete])
 
   return (
     <AnimatePresence>
       {phase !== 'exit' ? (
         <motion.div
-          className="fixed inset-0 z-[9999] bg-[#080808] flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[9999] bg-rz-black flex items-center justify-center overflow-hidden"
+          initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Image background très sombre */}
+          {/* Background editorial images - slow Ken Burns */}
           <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 1.06, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.18 }}
-            transition={{ duration: 3.5, ease: 'easeOut' }}
+            className="absolute inset-0 opacity-20"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 4, ease: 'easeOut' }}
           >
-            <Image src="/images/tenu-1.png" alt="" fill
-              className="object-cover object-top" priority />
+            <Image
+              src="/images/tenu-6.png"
+              alt=""
+              fill
+              className="object-cover object-top"
+              priority
+            />
           </motion.div>
-          <div className="absolute inset-0 bg-[#080808]/70" />
 
-          {/* Contenu centré */}
-          <div className="relative z-10 flex flex-col items-center">
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-rz-black/80" />
 
-            {/* Monogramme — PNG blanc sans fond */}
-            <motion.div
-              className="w-20 md:w-24 mb-8"
-              initial={{ opacity: 0, y: 16 }}
-              animate={phase === 'logo' ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
-              transition={{ duration: 1.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
+          {/* Logo centré */}
+          <motion.div
+            className="relative z-10 flex flex-col items-center gap-6"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={phase === 'logo' ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.97 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Logo mark - monogramme blanc */}
+            <div className="w-28 md:w-36 relative">
               <Image
-                src="/images/logo-white.png"
+                src="/images/logo.jpg"
                 alt="RUZANOVIC"
-                width={160}
-                height={210}
-                className="w-full h-auto"
+                width={200}
+                height={260}
+                className="w-full h-auto invert"
                 priority
               />
-            </motion.div>
+            </div>
 
             {/* Ligne fine */}
             <motion.div
-              className="bg-white/20 mb-8"
-              initial={{ height: 0, opacity: 0 }}
-              animate={phase === 'logo' ? { height: 40, opacity: 1 } : { height: 0, opacity: 0 }}
-              transition={{ duration: 0.9, delay: 0.5 }}
-              style={{ width: 1 }}
+              className="w-px bg-rz-warm/40"
+              initial={{ height: 0 }}
+              animate={phase === 'logo' ? { height: 32 } : { height: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             />
-
-            {/* RUZANOVIC en grand */}
-            <div className="overflow-hidden mb-3">
-              <motion.h1
-                className="font-display font-light text-white tracking-[0.3em] uppercase"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
-                initial={{ y: '110%' }}
-                animate={phase === 'logo' ? { y: 0 } : { y: '-110%' }}
-                transition={{ duration: 1.2, delay: 0.6, ease: [0.77, 0, 0.175, 1] }}
-              >
-                Ruzanovic
-              </motion.h1>
-            </div>
 
             {/* Tagline */}
             <motion.p
-              className="font-mono text-white/35 text-[0.58rem] tracking-[0.45em] uppercase"
+              className="text-rz-warm/50 font-mono text-[0.6rem] tracking-[0.4em] uppercase"
               initial={{ opacity: 0 }}
               animate={phase === 'logo' ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 1, delay: 1 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
             >
-              Collection Printemps — Été 2025
+              Collection 2025
             </motion.p>
-          </div>
+          </motion.div>
 
-          {/* Coins */}
-          <motion.span
-            className="absolute bottom-8 left-10 font-mono text-white/20 text-[0.52rem] tracking-[0.3em] uppercase"
+          {/* Coin bas gauche */}
+          <motion.div
+            className="absolute bottom-8 left-8 text-rz-warm/30 font-mono text-[0.55rem] tracking-[0.25em] uppercase"
+            initial={{ opacity: 0 }}
+            animate={phase === 'logo' ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 1, delay: 1 }}
+          >
+            Paris, France
+          </motion.div>
+
+          {/* Coin bas droit */}
+          <motion.div
+            className="absolute bottom-8 right-8 text-rz-warm/30 font-mono text-[0.55rem] tracking-[0.25em] uppercase"
             initial={{ opacity: 0 }}
             animate={phase === 'logo' ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 1, delay: 1.2 }}
-          >Paris, France</motion.span>
-          <motion.span
-            className="absolute bottom-8 right-10 font-mono text-white/20 text-[0.52rem] tracking-[0.3em] uppercase"
-            initial={{ opacity: 0 }}
-            animate={phase === 'logo' ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 1, delay: 1.3 }}
-          >SS 25</motion.span>
+          >
+            SS 25
+          </motion.div>
         </motion.div>
       ) : (
+        /* Panneau de sortie - sweep */
         <motion.div
-          key="exit"
-          className="fixed inset-0 z-[9998] bg-[#080808] origin-top"
+          key="exit-panel"
+          className="fixed inset-0 z-[9998] bg-rz-black origin-top"
           initial={{ scaleY: 1 }}
           animate={{ scaleY: 0 }}
-          transition={{ duration: 1.1, ease: [0.77, 0, 0.175, 1] }}
+          transition={{ duration: 1.1, ease: [0.77, 0, 0.175, 1], delay: 0.1 }}
         />
       )}
     </AnimatePresence>
